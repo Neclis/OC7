@@ -4,5 +4,6 @@ fastapi
 pandas 
 numpy
 gunicorn
+uvicorn
 scikit-learn
 scipy
