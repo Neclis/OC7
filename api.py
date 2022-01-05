@@ -30,16 +30,6 @@ def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                           'favicon.ico',mimetype='image/vnd.microsoft.icon')
 
-#### API START
-@app.route('/api/')
-def client():
-    client_dict = { 
-                "test" : "test",
-                "test2" : 244,
-                "test3" : [1,2,3]
-                }
-    return jsonify(client_dict)
-
 #### API : READ DATA from data2
 class read(Resource):
     def __init__(self):
@@ -52,7 +42,7 @@ class read(Resource):
         data_found=self.data.loc[self.data.index == ID].to_dict()
         # return data found in csv
         return jsonify(data_found)
-api.add_resource(read, '/api/read/<int:ID>')
+api.add_resource(read, '/read/<int:ID>')
 
 #### API : predict data from test set id
 @app.route('/enterid', methods = ['POST', 'GET'])
