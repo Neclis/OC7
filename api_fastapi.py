@@ -3,7 +3,7 @@ import pickle
 import pandas as pd
 import uvicorn ##ASGI
 from fastapi import FastAPI
-from api_fastapi_datamodel import datamodel
+# from api_fastapi_datamodel import datamodel
 
 app = FastAPI()
 
