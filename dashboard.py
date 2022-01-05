@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 import numpy as np
 import requests
+# from page1 import App_prediction_from_id
 
 main_features = ['EXT_SOURCE_1',
                 'EXT_SOURCE_2',
