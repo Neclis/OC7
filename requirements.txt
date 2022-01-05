@@ -1,9 +1,7 @@
 flask
 flask_restful
-fastapi
 pandas 
 numpy
 gunicorn
-uvicorn
 scikit-learn
 scipy

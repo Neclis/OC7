@@ -1,1 +1,1 @@
-web: gunicorn api_fastapi:app
+web: gunicorn api:app
