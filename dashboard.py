@@ -16,9 +16,9 @@ main_features = ['EXT_SOURCE_1',
                 'AMT_CREDIT_SUM_DEBT'
                 ]
 
-sample = pd.read_pickle("X_train2_sc_pd_sample.pickle")
 main_features_pd = pd.read_pickle("main_features_pd.pickle")
 X_train2_sc_pd_mean = pd.read_pickle("X_train2_sc_pd_mean.pickle")
+sample = pd.read_pickle("X_test2_sc_pd_sample.pickle")
 
 def request_prediction( model_uri, data):
 
@@ -71,11 +71,12 @@ class App_prediction_from_data:
         
         data = np.zeros(len(main_features_pd.index))
         
+        col1, col2 = st.columns(2)
         for i,var in enumerate(main_features_pd.index):
-            data[i] = st.number_input(var, min_value=main_features_pd.loc[var,"Min"], 
-                value=main_features_pd.loc[var,"Med"], 
-                max_value=main_features_pd.loc[var,"Max"],
-                step=0.01)
+            if i < 5:
+                data[i] = col1.number_input(var, min_value=main_features_pd.loc[var,"Min"], value=main_features_pd.loc[var,"Med"], max_value=main_features_pd.loc[var,"Max"], step=0.01)            
+            else :
+                data[i] = col2.number_input(var, min_value=main_features_pd.loc[var,"Min"], value=main_features_pd.loc[var,"Med"], max_value=main_features_pd.loc[var,"Max"], step=0.01)            
 
         predict_btn = st.button('Prédire')
 
@@ -94,8 +95,8 @@ def main():
     st.title('Loan Dashboard')
 
     PAGES = {
-    "Prediction from customer ID": App_prediction_from_id,
-    "Prediction from data input" : App_prediction_from_data
+            "Prediction from customer ID": App_prediction_from_id,
+            "Prediction from data input" : App_prediction_from_data
             }
     
     st.sidebar.title("Navigation")
@@ -106,3 +107,6 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+# CLI : 
+# streamlit run dashboard.py

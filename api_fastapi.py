@@ -3,58 +3,53 @@ import pickle
 import pandas as pd
 import uvicorn ##ASGI
 from fastapi import FastAPI
-# from api_fastapi_datamodel import datamodel
+from fastapi.responses import FileResponse 
+from api_fastapi_datamodel import datamodel
 
-app = FastAPI()
+app = FastAPI(title='NM FastAPI')
+favicon_path = 'static/favicon.ico'
 
 # load ML model & data
-model=pickle.load(open('model_opti.pickle', 'rb'))
-data = pd.read_csv('P7_raw/application_train.csv')
-data2 = pd.read_pickle("data2.pickle")
-X_test2_sc = pd.read_pickle("X_test2_sc.pickle")
-X_train2_sc_pd_mean = pd.read_pickle("X_train2_sc_pd_mean.pickle")
+with open('model_opti.pickle', 'rb') as f:
+    model = pickle.load(f)
+data2 = pd.read_pickle("data2_sample.pickle")
+sample = pd.read_pickle("X_test2_sc_pd_sample.pickle")
 main_features_pd = pd.read_pickle("main_features_pd.pickle")
+X_train2_sc_pd_mean = pd.read_pickle("X_train2_sc_pd_mean.pickle")
 
 #### APP : Welcome page
 @app.get('/')
 def home():
-    return {"data": "Hello, World!"}
+    hello = "Hello World! /n Available commands are : /n /read/id with ID = [90265, 75598, 40776, 68707, 28645, 54948, 65586,  3629,  3963] /n /enterid (get / post) /n /enterdata (post) "
+    return {"data": hello}
 
-# @app.get('/favicon.ico')
-# def favicon():
-#     return send_from_directory(os.path.join(app.root_path, 'static'),
-#                           'favicon.ico',mimetype='image/vnd.microsoft.icon')
+@app.get('/favicon.ico')
+def favicon():
+    return FileResponse(favicon_path)
 
 #### API : READ DATA from data2
-# GET request on the url will hit this function
-@app.get('/read')
-def get(ID : int):
-    # find data from csv based on user input
-    print(data.loc[data.index == ID].iloc[:,:3])
-    # data_found=data.loc[data.index == ID].to_dict()
-    
-    # return data found in csv
-    return {"data_found":"yes"}
+@app.get('/read/{ide}')
+def get(ide : int):
+    data_found=data2.loc[data2.index == ide].to_dict()
+    return {"data_found": data_found}
+
 
 #### API : predict data from test set id
-@app.get('/enterid_get')
+def enterid(ide:int):
+    pred_0 = model.predict_proba(sample.loc[sample.index ==ide])[0][0]
+    pred_1 = model.predict_proba(sample.loc[sample.index ==ide])[0][1]
+    dict_pred = {"proba_0" : pred_0 , "proba_1" : pred_1}
+    return dict_pred
+
+@app.get('/enterid/{ide}')
 def enterid_get(ide:int):
-    # print("enterid get", ide)
-    pred_0 = model.predict_proba(X_test2_sc[ide].reshape(1,-1))[0][0]
-    pred_1 = model.predict_proba(X_test2_sc[ide].reshape(1,-1))[0][1]
-    dict_pred = {"proba_0" : pred_0 , "proba_1" : pred_1}
-    # print("proba to dict done")
-    return dict_pred
+    return enterid(ide)
+
 
 #### API : predict data from test set id
-@app.post('/enterid_post')
-def enterid_post(ide:int):
-    # print("enterid post", ide)
-    pred_0 = model.predict_proba(X_test2_sc[ide].reshape(1,-1))[0][0]
-    pred_1 = model.predict_proba(X_test2_sc[ide].reshape(1,-1))[0][1]
-    dict_pred = {"proba_0" : pred_0 , "proba_1" : pred_1}
-    # print("proba to dict done")
-    return dict_pred
+@app.post('/enterid/{ide}')
+def enterid_get(ide:int):
+    return enterid(ide)
 
 
 #### API : predict data from data input
@@ -68,13 +63,10 @@ def enterdata(data:datamodel):
 
     for var in main_features_pd.index:
         X_train2_sc_pd_mean[var] = data[var]
-        print(var, X_train2_sc_pd_mean[var])
 
     pred_0 = model.predict_proba([X_train2_sc_pd_mean])[0][0]
     pred_1 = model.predict_proba([X_train2_sc_pd_mean])[0][1]
-
     dict_pred = {"proba_0" : pred_0 , "proba_1" : pred_1}
-
     return dict_pred
 
 

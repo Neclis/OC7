@@ -10,12 +10,10 @@ app = Flask(__name__)
 api = Api(app)
 
 # load ML model & data
-model=pickle.load(open('model_opti.pickle', 'rb'))
-data = pd.read_csv('P7_raw/application_train.csv')
-data2 = pd.read_pickle("data2.pickle")
-with open('X_test2_sc.pickle', 'rb') as f:
-    X_test2_sc = pickle.load(f)
-
+with open('model_opti.pickle', 'rb') as f:
+    model = pickle.load(f)
+data2 = pd.read_pickle("data2_sample.pickle")
+sample = pd.read_pickle("X_test2_sc_pd_sample.pickle")
 main_features_pd = pd.read_pickle("main_features_pd.pickle")
 X_train2_sc_pd_mean = pd.read_pickle("X_train2_sc_pd_mean.pickle")
 
@@ -23,7 +21,8 @@ X_train2_sc_pd_mean = pd.read_pickle("X_train2_sc_pd_mean.pickle")
 #### APP : Welcome page
 @app.route("/")
 def hello():
-    return "Hello World!"
+    hello = "Hello World! /n Available commands are : /n /read/id with ID = [90265, 75598, 40776, 68707, 28645, 54948, 65586,  3629,  3963] /n /enterid (get / post) /n /enterdata (post) "
+    return hello
 
 @app.route('/favicon.ico')
 def favicon():
@@ -31,18 +30,10 @@ def favicon():
                           'favicon.ico',mimetype='image/vnd.microsoft.icon')
 
 #### API : READ DATA from data2
-class read(Resource):
-    def __init__(self):
-        # read csv file
-        self.data = data
-    
-    # GET request on the url will hit this function
-    def get(self,ID):
-        # find data from csv based on user input
-        data_found=self.data.loc[self.data.index == ID].to_dict()
-        # return data found in csv
-        return jsonify(data_found)
-api.add_resource(read, '/read/<int:ID>')
+@app.route('/read/<int:ide>', methods = ['GET'])
+def get(ide : int):
+    data_found=data2.loc[data2.index == ide].to_dict()
+    return jsonify({"data_found": data_found})
 
 #### API : predict data from test set id
 @app.route('/enterid', methods = ['POST', 'GET'])
@@ -59,24 +50,17 @@ def enterid():
 @app.route('/proba/<ide>')
 def proba(ide):
     ide = int(ide)
-    pred_0 = model.predict_proba(X_test2_sc[ide].reshape(1,-1))[0][0]
-    pred_1 = model.predict_proba(X_test2_sc[ide].reshape(1,-1))[0][1]
+    pred_0 = model.predict_proba(sample.loc[sample.index ==ide])[0][0]
+    pred_1 = model.predict_proba(sample.loc[sample.index ==ide])[0][1]
     dict_pred = {"proba_0" : pred_0 , "proba_1" : pred_1}
-    print("proba to dict done")
     return jsonify(dict_pred)
 
 #### API : predict data from data input
 @app.route('/enterdata', methods = ['POST'])
 def enterdata():
-    
-    # data = np.zeros(len(main_features_pd.index))
-    # for i, var in enumerate(main_features_pd.index):
-    #     data[i] = request.form[var]
-    #     print(var, data[i])
 
     for var in main_features_pd.index:
         X_train2_sc_pd_mean[var] = request.form[var]
-        print(var, X_train2_sc_pd_mean[var])
 
     pred_0 = model.predict_proba([X_train2_sc_pd_mean])[0][0]
     pred_1 = model.predict_proba([X_train2_sc_pd_mean])[0][1]
@@ -85,9 +69,5 @@ def enterdata():
     return jsonify(dict_pred)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
 
-    # host = os.getenv('IP','0.0.0.0')
-    # port = int(os.getenv('PORT',5000))
-    # app.secret_key = os.urandom(24)
-    # app.run(host=host,port=port)
