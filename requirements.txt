@@ -1,0 +1,8 @@
+flask
+flask_restful
+pandas 
+numpy
+uvicorn
+scikit-learn
+lightgbm
+shap
