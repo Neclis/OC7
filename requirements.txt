@@ -1,8 +1,0 @@
-flask
-flask_restful
-pandas 
-numpy
-gunicorn
-scikit-learn
-lightgbm
-shap
