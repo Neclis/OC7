@@ -1,0 +1,11 @@
+/__pycache__
+/.ipynb_checkpoints
+/.vscode
+/P7_raw
+application_train.pickle
+data.pickle
+data2.pickle
+shap_values_tree.pickle
+trained_models.pickle
+trained_models2.pickle
+X_test2_sc.pickle
