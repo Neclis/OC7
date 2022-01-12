@@ -1,12 +1,12 @@
-from logging import PlaceHolder
 import pandas as pd
 import streamlit as st
 import numpy as np
 import requests
 from matplotlib import pyplot as plt
 import numpy as np
-import seaborn as sns
-sns.set()
+import os
+# import seaborn as sns
+# sns.set()
 
 api_url = "https://banking-data-dashboard.herokuapp.com/"
 
@@ -32,6 +32,7 @@ class Welcome_page:
         This dashboard was built for the project 7 of the data science course of [https://openclassrooms.com/fr/paths/164-data-scientist](Openclassrooms)
         
         The purposes of the dashboard is to :  
+        + Present the key aspects of the given data set.
         + Display the data of a list of clients to evaluate whether or not the bank should grant them a loan.
         + Evaluate the solvability of a dummy client with data you input.
             
@@ -42,12 +43,19 @@ class Welcome_page:
                         min_child_weight=0.05,  
                         min_split_gain=0.05,  
                         num_leaves=48)  
-
+        
+        You can find the code at : [https://github.com/Neclis/OC7](https://github.com/Neclis/OC7)
         """
         st.markdown(text)
 
-        st.markdown("""You can find the code at : [https://github.com/Neclis/OC7](https://github.com/Neclis/OC7)""")
+class Data_overview:
 
+    def app():
+        st.header('Data Overview')
+        st.write('This page presents some key features of the data and the ones that are the most impactful for the model.')
+        for file in os.listdir(path='./pics'):
+            st.image('./pics/'+file)
+        
 class App_prediction_from_id:
 
     def app():
@@ -165,6 +173,7 @@ def main():
 
     PAGES = {
             "Welcome page": Welcome_page,
+            "Dataset overview" : Data_overview,
             "Prediction from customer ID": App_prediction_from_id,
             "Prediction from data input" : App_prediction_from_data
             }
