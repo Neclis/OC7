@@ -13,9 +13,9 @@ favicon_path = 'static/favicon.ico'
 with open('model_opti.pickle', 'rb') as f:
     model = pickle.load(f)
 data2 = pd.read_pickle("data2_sample.pickle")
-sample = pd.read_pickle("X_test2_sc_pd_sample.pickle")
-main_features_pd = pd.read_pickle("main_features_pd.pickle")
-X_train2_sc_pd_mean = pd.read_pickle("X_train2_sc_pd_mean.pickle")
+main_features_pd = pd.read_csv("main_features_pd.csv", index_col="index")
+X_train2_sc_pd_mean = pd.read_csv("X_train2_sc_pd_mean.csv", index_col="index")
+sample = pd.read_csv("X_test2_sc_pd_sample.csv", index_col="index")
 
 #### APP : Welcome page
 @app.get('/')
