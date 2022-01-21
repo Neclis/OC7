@@ -20,7 +20,7 @@ sample = pd.read_csv("X_test2_sc_pd_sample.csv", index_col="index")
 #### APP : Welcome page
 @app.get('/')
 def home():
-    hello = "Hello World! /n Available commands are : /n /read/id with ID = [90265, 75598, 40776, 68707, 28645, 54948, 65586,  3629,  3963] /n /enterid (get / post) /n /enterdata (post) "
+    hello = "Hello World! \n Available commands are : <br> /read/id with ID = [90265, 75598, 40776, 68707, 28645, 54948, 65586,  3629,  3963] </br> /enterid (get / post) </br> /enterdata (post)"    
     return {"data": hello}
 
 @app.get('/favicon.ico')
